@@ -6,8 +6,9 @@ const port = process.env.PORT || 5000;
 const db = require('./mongoose');
 
 const allowedOrigins = [
-  'http://localhost:3000', 
-  'https://pu-resources-frontend.onrender.com'
+  'http://localhost:3000',
+  'https://pu-resources-frontend.onrender.com',
+  'https://pu-resources-c539f.web.app'
 ];
 
 const corsOptions = {
