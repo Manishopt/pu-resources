@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Card from './components/Card';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import './App.css'; // Import the CSS file for additional styles
 
 export default function App() {
@@ -24,14 +24,6 @@ export default function App() {
     loadData();
   }, []);
 
-  let navigate = useNavigate();
-  
-  useEffect(() => {
-    if (!localStorage.getItem("authToken")) {
-      navigate("/");
-    }
-  }, [navigate]);
-
   const selectPageHandler = (selectedPage) => {
     if (
       selectedPage >= 1 &&
@@ -47,12 +39,12 @@ export default function App() {
   );
 
   return (
-    <div>
+    <div className="main-wrapper">
       <Navbar />
       <div className="container">
         <form className="d-flex mt-3 mb-3">
           <input
-            className="form-control me-2"
+            className="form-control me-2 search-input"
             type="search"
             placeholder="Search Subject"
             aria-label="Search"
@@ -60,17 +52,22 @@ export default function App() {
             onChange={(e) => { setSearch(e.target.value); setPages(1); }}
           />
         </form>
-        <div className="row">
+        <div className="row justify-content-center">
           {filteredData.length !== 0
             ? filteredData.slice((page - 1) * 3, page * 3).map((data) => {
               return (
-                <div key={data._id} className="col-12 col-md-6 col-lg-4 mb-3">
+                <div key={data._id} className="col-12 col-sm-6 col-lg-4 mb-3">
                   <Card name={data.name} cie={data.CIE1} mid={data.MID} end={data.END} notes={data.notes} />
                 </div>
               );
             })
-            : <div>No data found</div>
+            : <div className="no-data">No data found</div>
           }
+        </div>
+        <div className="social-links text-center mt-4 mb-4">
+          <a href="https://www.instagram.com/harsh._.naruka/" target="_blank" rel="noopener noreferrer" className="instagram-link">
+            Follow us on Instagram
+          </a>
         </div>
         {filteredData.length > 0 && (
           <div className="pagination">

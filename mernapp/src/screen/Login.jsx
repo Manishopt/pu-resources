@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { TailSpin } from 'react-loader-spinner';  // Import the loading spinner
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import eye icons
@@ -8,28 +8,66 @@ export default function Login() {
     const [credentials, setCredentials] = useState({ email: "", password: "" });
     const [loading, setLoading] = useState(false);  // State to manage loading
     const [showPassword, setShowPassword] = useState(false); // State to manage password visibility
+    const [lastLoginAttempt, setLastLoginAttempt] = useState(0); // Track login attempts to prevent spam
     let navigate = useNavigate();
+
+    // Check if user is already logged in
+    useEffect(() => {
+        const token = localStorage.getItem("authToken");
+        if (token) {
+            // Redirect to home if already logged in
+            navigate("/");
+        }
+    }, [navigate]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setLoading(true);  // Start loading
 
-        const response = await fetch("https://pu-resources-backend.onrender.com/api/loginuser", {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email: credentials.email, password: credentials.password })
-        });
-        const json = await response.json();
-        setLoading(false);  // Stop loading
+        // Prevent spam login attempts (minimum 1 second between attempts)
+        const now = Date.now();
+        if (now - lastLoginAttempt < 1000) {
+            alert("Please wait a moment before trying again");
+            return;
+        }
+        setLastLoginAttempt(now);
 
-        if (!json.success) {
-            alert("Email or password is incorrect");
-        } else {
-            localStorage.setItem("authToken", json.authToken);
-            navigate("/");
-            alert("Login successful");
+        setLoading(true);
+
+        try {
+            // Add timeout to API call (10 seconds max)
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+            const response = await fetch("https://pu-resources-lf6n.onrender.com/api/loginuser", {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email: credentials.email, password: credentials.password }),
+                signal: controller.signal,
+                cache: 'no-cache' // Don't cache login requests
+            });
+
+            clearTimeout(timeoutId);
+            const json = await response.json();
+
+            if (!json.success) {
+                alert("Email or password is incorrect");
+            } else {
+                localStorage.setItem("authToken", json.authToken);
+                // Use navigate with replace to avoid browser back button issues
+                navigate("/", { replace: true });
+                // alert("Login successful"); // Replaced with toast or better UX
+            }
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                alert("Login request timed out. Please check your internet connection and try again.");
+            } else {
+                alert("Network error. Please try again.");
+            }
+            console.error("Login error:", error);
+        } finally {
+            setLoading(false);
         }
     }
 

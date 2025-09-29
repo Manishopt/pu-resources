@@ -89,11 +89,62 @@
   padding-top: 13px;
 }
 
+/* Main wrapper styles */
+.main-wrapper {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* Search input styles */
+.search-input {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* No data message styles */
+.no-data {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  margin: 2rem 0;
+}
+
+/* Instagram link styles */
+.social-links {
+  margin: 2rem 0;
+}
+
+.instagram-link {
+  display: inline-block;
+  background-color: #E1306C;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.instagram-link:hover {
+  background-color: #c13584;
+  transform: translateY(-2px);
+  color: white;
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
   .container1 {
-    font-size: 30px;
-    margin-top: 200px;
+    font-size: 24px;
+    margin-top: 120px;
+  }
+
+  .search-input {
+    font-size: 16px;
+  }
+
+  .instagram-link {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
   }
 
   .btn1 {
@@ -129,20 +180,81 @@
 
 
 
-/* Ensure body and html take full height */
+/* Modern App Root Styles */
 html, body {
   height: 100%;
   margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-attachment: fixed;
 }
 
-/* Responsive card container */
-
-/* Navbar and logout button styling */
-.navbar, .logout {
-  margin: 10px;
+/* Enhanced Search Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-/* Override Bootstrap classes if necessary */
+/* Modern Search Input */
+.form-control {
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  padding: 15px 25px;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.form-control::placeholder {
+  color: #999;
+  font-weight: 400;
+}
+
+/* Modern No Data Message */
+.no-data-message {
+  text-align: center;
+  padding: 50px 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 400px;
+}
+
+.no-data-message h3 {
+  color: #666;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.no-data-message p {
+  color: #999;
+  font-size: 0.95rem;
+}
+
+/* Enhanced Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px 10px;
+  }
+
+  .form-control {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+}
+
 @media (max-width: 986px) {
   .nav-ul {
     width: 100px;
@@ -260,11 +372,10 @@ li{
               0px 0px 7px #0679e6;
 }
 
+/* Optimized background - removed heavy image */
 .main-container{
   height: 100vh;
-  background-image: url("./images/admission_block.jpg");
-  background-size: 100% cover;
-  background-position: center;
+  /* Background image removed for better performance */
 }
 
 

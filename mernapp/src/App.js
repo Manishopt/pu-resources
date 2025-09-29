@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Card from './components/Card';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { TailSpin } from 'react-loader-spinner'; // Import the loading spinner
 import './App.css'; // Import the CSS file for additional styles
+// import { analytics } from './firebase'; // Firebase analytics - temporarily disabled
 
 export default function App() {
   const [search, setSearch] = useState('');
@@ -13,28 +14,65 @@ export default function App() {
 
   const loadData = async () => {
     setLoading(true); // Set loading to true when fetching data
-    let response = await fetch("https://pu-resources-backend.onrender.com/api/Data", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json"
+
+    // Check if data is cached and still fresh (cache for 1 hour)
+    const cachedData = localStorage.getItem('pu-resources-data');
+    const cacheTime = localStorage.getItem('pu-resources-cache-time');
+    const now = Date.now();
+    const cacheExpiry = 60 * 60 * 1000; // 1 hour in milliseconds
+
+    if (cachedData && cacheTime && (now - parseInt(cacheTime) < cacheExpiry)) {
+      try {
+        const parsedData = JSON.parse(cachedData);
+        setData(parsedData);
+        setLoading(false);
+        return; // Use cached data
+      } catch (error) {
+        console.error('Error parsing cached data:', error);
       }
-    });
-    response = await response.json();
-    setData(response[0]);
-    setLoading(false); // Set loading to false after data is fetched
+    }
+
+    try {
+      let response = await fetch("https://pu-resources-lf6n.onrender.com/api/Data", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json"
+        },
+        cache: 'default' // Use browser cache when possible
+      });
+      response = await response.json();
+
+      setData(response[0]);
+      setLoading(false); // Set loading to false after data is fetched
+
+      // Cache the data in localStorage
+      try {
+        localStorage.setItem('pu-resources-data', JSON.stringify(response[0]));
+        localStorage.setItem('pu-resources-cache-time', now.toString());
+      } catch (storageError) {
+        console.warn('Failed to cache data in localStorage:', storageError);
+      }
+
+    } catch (error) {
+      setLoading(false);
+      console.error('Error loading data:', error);
+
+      // If API fails and we have cached data, use it as fallback
+      if (cachedData && cacheTime && (now - parseInt(cacheTime) < cacheExpiry * 24)) { // Allow up to 24 hours old
+        try {
+          const parsedData = JSON.parse(cachedData);
+          setData(parsedData);
+          console.log('Using cached data as fallback');
+        } catch (fallbackError) {
+          console.error('Error using cached fallback data:', fallbackError);
+        }
+      }
+    }
   };
 
   useEffect(() => {
     loadData();
   }, []);
-
-  let navigate = useNavigate();
-  
-  useEffect(() => {
-    if (!localStorage.getItem("authToken")) {
-      navigate("/");
-    }
-  }, [navigate]);
 
   const selectPageHandler = (selectedPage) => {
     if (
@@ -84,7 +122,10 @@ export default function App() {
                 );
               })
             ) : (
-              <div>No data found</div>
+              <div className="no-data-message">
+                <h3>📭 No subjects found</h3>
+                <p>Try adjusting your search terms or clear the search to see all available subjects.</p>
+              </div>
             )}
           </div>
           {filteredData.length > 0 && (

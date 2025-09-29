@@ -12,23 +12,41 @@ export default function Signup() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setLoading(true);  // Start loading
+        setLoading(true);
 
-        const response = await fetch("https://pu-resources-backend.onrender.com/api/createuser", {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ name: credentials.name, email: credentials.email, password: credentials.password, location: credentials.location })
-        });
-        const json = await response.json();
-        setLoading(false);  // Stop loading
+        try {
+            // Add timeout to API call (10 seconds max)
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-        if (!json.success) {
-            alert(json.message); // Display the error message from the server
-        } else {
-            alert("Signup Successful, please login");
-            navigate("/");
+            const response = await fetch("https://pu-resources-backend.onrender.com/api/createuser", {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ name: credentials.name, email: credentials.email, password: credentials.password, location: credentials.location }),
+                signal: controller.signal,
+                cache: 'no-cache'
+            });
+
+            clearTimeout(timeoutId);
+            const json = await response.json();
+
+            if (!json.success) {
+                alert(json.message);
+            } else {
+                alert("Signup Successful, please login");
+                navigate("/login", { replace: true });
+            }
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                alert("Signup request timed out. Please check your internet connection and try again.");
+            } else {
+                alert("Network error. Please try again.");
+            }
+            console.error("Signup error:", error);
+        } finally {
+            setLoading(false);
         }
     }
 

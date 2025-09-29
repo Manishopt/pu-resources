@@ -1,26 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import "../App.css"
-export default function Btech() {
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!localStorage.getItem("authToken")) {
-      navigate("/");
-    }
-  }, [navigate]);
-
-
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    navigate("/");
-  }
+export default function Bcom() {
+  // Auth removed
   return (
     <div>
       <Navbar/>
-      <div className="btn bg-danger text-white mx-2 logout" onClick={handleLogout}>Logout</div>
       <div className="container mt-5">
         <div className="row justify-content-center">
           <div className="col-12 col-md-6 col-lg-4 mb-4">

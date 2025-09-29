@@ -7,8 +7,7 @@ import Bba from './Semester/Bba';
 import Bca from './Semester/Bca';
 import Bcom from './Semester/Bcom';
 import Home from './components/Home';
-import Signup from './screen/Signup';
-import Login from './screen/Login';
+// Signup and Login components removed
 import reportWebVitals from './reportWebVitals';
 import {RouterProvider, createBrowserRouter} from "react-router-dom"
 import Year2ndBtech from './Year2ndBtech';
@@ -57,15 +56,7 @@ let allroute = createBrowserRouter(
         path:'/Btech2ndYear',
         element:<Year2ndBtech/>
       },
-      {
-        path:'/login',
-        element:<Login/>
-      },
-  
-        {
-        path:'/createuser',
-        element:<Signup/>
-      },
+      // login and signup routes removed
 
     
   ]
